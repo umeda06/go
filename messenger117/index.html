@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <title>Wherever you are...</title>
+  <link rel="stylesheet" type="text/css" href="/static/style.css">
+</head>
+<body>
+
+<h1>Wherever you are...</h1>
+
+<img id="logo" src="/static/gopher.png" width="100">
+
+{{with .Notice}}<div id="notice">{{.}}</div>{{end}}
+
+<form action="/" method="post">
+  <div>Name:<br><input name="name" value="{{.Name}}"></div>
+  <div>Message:<br><textarea name="message" rows="4" cols="40">{{.Message}}</textarea></div>
+  <input type="submit">
+</form>
+
+<!-- [START html_template] --> 
+{{with .Posts1}}
+<ul>
+  {{range .}}
+  <li><cite>T</cite><pre>{{.Message}}</pre><p>Posted: {{.Posted}}</p></li>
+  {{end}}
+</ul>
+{{end}}
+{{with .Posts2}}
+<ul>
+  {{range .}}
+  <li><cite>A</cite><pre>{{.Message}}</pre><p>Posted: {{.Posted}}</p></li>
+  {{end}}
+</ul>
+{{end}}
+<!-- [END html_template] -->
+
+</body>
+</html>
