@@ -1,5 +1,16 @@
 body {
   color: blue;
+  font-size: x-large;
+}
+
+input {
+  color: black;
+  font-size: x-large;
+}
+
+p {
+  color: blue;
+  font-size: medium;
 }
 
 #notice {

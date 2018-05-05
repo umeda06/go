@@ -55,7 +55,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	params.Name = post.Author
 
-	if post.Author != "たいち225" && post.Author != "あゆみ117" {
+	if post.Author != "たいち" && post.Author != "あゆみ" {
 		indexTemplate.Execute(w, params)
 		return
 	}
@@ -90,7 +90,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if post.Author == "たいち225" {
+	if post.Author == "たいち" {
 		key := datastore.NewIncompleteKey(ctx, "Post1", nil)
 		if _, err := datastore.Put(ctx, key, &post); err != nil {
 			log.Errorf(ctx, "datastore.Put: %v", err)
@@ -104,7 +104,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		indexTemplate.Execute(w, params)
 		return
 	}
-	if post.Author == "あゆみ117" {
+	if post.Author == "あゆみ" {
 		key := datastore.NewIncompleteKey(ctx, "Post2", nil)
 		if _, err := datastore.Put(ctx, key, &post); err != nil {
 			log.Errorf(ctx, "datastore.Put: %v", err)
