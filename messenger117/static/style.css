@@ -8,6 +8,11 @@ input {
   font-size: x-large;
 }
 
+textarea {
+  color: black;
+  font-size: x-large;
+}
+
 p {
   color: blue;
   font-size: medium;
