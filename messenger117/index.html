@@ -20,19 +20,25 @@
 
 <!-- [START html_template] --> 
 {{with .Posts1}}
-<ul>
+  <ul>
+    <li><cite>T</cite></li>
+  </ul>
   {{range .}}
-  <li><cite>T</cite><pre>{{.Message}}</pre><p>Posted: {{.Posted}}</p></li>
+    <pre>{{.Message}}</pre><p>Posted: {{.Posted}}<br>
   {{end}}
-</ul>
 {{end}}
+{{with .Access1}}{{range .}}Access: {{.Posted}}</p>{{end}}{{end}}
+
 {{with .Posts2}}
-<ul>
+  <ul>
+    <li><cite>A</cite></li>
+  </ul>
   {{range .}}
-  <li><cite>A</cite><pre>{{.Message}}</pre><p>Posted: {{.Posted}}</p></li>
+    <pre>{{.Message}}</pre><p>Posted: {{.Posted}}<br>
   {{end}}
-</ul>
 {{end}}
+{{with .Access2}}{{range .}}Access: {{.Posted}}</p>{{end}}{{end}}
+
 <!-- [END html_template] -->
 
 </body>

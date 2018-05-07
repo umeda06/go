@@ -27,7 +27,9 @@ type templateParams struct {
 	Name string
 	Message string
 	Posts1 []Post
+	Access1 []Post
 	Posts2 []Post
+	Access2 []Post
 }
 
 func main() {
@@ -51,7 +53,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	post := Post{
 		Author:  r.FormValue("name"),
 		Message: r.FormValue("message"),
-		Posted:  jst(time.Now()),
+		Posted: jst(time.Now()),
 	}
 	params.Name = post.Author
 
@@ -77,6 +79,14 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		indexTemplate.Execute(w, params)
 		return
 	}
+	if post.Author == "たいち" {
+		q4 := datastore.NewQuery("Access2").Order("-Posted").Limit(1)
+		q4.GetAll(ctx, &params.Access2)
+	}
+	if post.Author == "あゆみ" {
+		q3 := datastore.NewQuery("Access1").Order("-Posted").Limit(1)
+		q3.GetAll(ctx, &params.Access1)
+	}
 
 	for i := 0; i < len(params.Posts1); i++ {
 		params.Posts1[i].Posted = jst(params.Posts1[i].Posted)
@@ -84,8 +94,23 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(params.Posts2); i++ {
 		params.Posts2[i].Posted = jst(params.Posts2[i].Posted)
 	}
+	for i := 0; i < len(params.Access1); i++ {
+		params.Access1[i].Posted = jst(params.Access1[i].Posted)
+	}
+	for i := 0; i < len(params.Access2); i++ {
+		params.Access2[i].Posted = jst(params.Access2[i].Posted)
+	}
 
 	if post.Message == "" {
+		if post.Author == "たいち" {
+			key := datastore.NewIncompleteKey(ctx, "Access1", nil)
+			datastore.Put(ctx, key, &post)
+		}
+		if post.Author == "あゆみ" {
+			key := datastore.NewIncompleteKey(ctx, "Access2", nil)
+			datastore.Put(ctx, key, &post)
+		}
+		params.Name = ""
 		indexTemplate.Execute(w, params)
 		return
 	}
@@ -101,6 +126,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		params.Posts1 = []Post{post}
+		params.Name = ""
 		indexTemplate.Execute(w, params)
 		return
 	}
@@ -115,6 +141,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		params.Posts2 = []Post{post}
+		params.Name = ""
 		indexTemplate.Execute(w, params)
 		return
 	}
