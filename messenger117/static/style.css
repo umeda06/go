@@ -18,6 +18,11 @@ p {
   font-size: medium;
 }
 
+b {
+  color: red;
+  font-size: medium;
+}
+
 #notice {
   color: red;
 }

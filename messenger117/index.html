@@ -3,6 +3,7 @@
 <head>
   <title>Wherever you are...</title>
   <link rel="stylesheet" type="text/css" href="/static/style.css">
+  <script type="text/javascript" src="/static/jquery-3.3.1.min.js"></script>
 </head>
 <body>
 
@@ -18,28 +19,50 @@
   <input type="submit">
 </form>
 
-<!-- [START html_template] --> 
-{{with .Posts1}}
-  <ul>
-    <li><cite>T</cite></li>
-  </ul>
-  {{range .}}
-    <pre>{{.Message}}</pre><p>Posted: {{.Posted}}<br>
+<div id="secret">
+  {{with .Posts1}}
+    <ul>
+      <li><cite>T</cite></li>
+    </ul>
+    {{range .}}
+      <pre>{{.Message}}</pre>
+      <p>Posted: {{.Posted}}</p>
+    {{end}}
   {{end}}
-{{end}}
-{{with .Access1}}{{range .}}Access: {{.Posted}}</p>{{end}}{{end}}
-
-{{with .Posts2}}
-  <ul>
-    <li><cite>A</cite></li>
-  </ul>
-  {{range .}}
-    <pre>{{.Message}}</pre><p>Posted: {{.Posted}}<br>
+  {{with .Access1}}
+    {{range .}}
+      <p>Access: {{.Posted}}</p>
+    {{end}}
   {{end}}
-{{end}}
-{{with .Access2}}{{range .}}Access: {{.Posted}}</p>{{end}}{{end}}
 
-<!-- [END html_template] -->
+<b><span id="blink0243">{{.Check1}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>
+
+  {{with .Posts2}}
+    <ul>
+      <li><cite>A</cite></li>
+    </ul>
+    {{range .}}
+      <pre>{{.Message}}</pre>
+      <p>Posted: {{.Posted}}</p>
+    {{end}}
+  {{end}}
+  {{with .Access2}}
+    {{range .}}
+      <p>Access: {{.Posted}}</p>
+    {{end}}
+  {{end}}
+
+<b><span id="blink0243">{{.Check2}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>
+
+</div>
+
+<script type="text/javascript">
+  $(function(){
+    setTimeout(function(){
+      $("#secret").html("");
+    }, 10000);
+  });
+</script>
 
 </body>
 </html>
