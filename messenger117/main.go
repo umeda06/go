@@ -1,6 +1,9 @@
 package main
 
 import (
+	"bytes"
+	"context"
+	"encoding/json"
 	_ "fmt"
 	"html/template"
 	"net/http"
@@ -9,11 +12,27 @@ import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/datastore"
 	"google.golang.org/appengine/log"
+	"google.golang.org/appengine/urlfetch"
 )
+
+type Push struct {
+	To []string `json:"to"`
+	Messages []Message `json:"messages"`
+}
+
+type Message struct {
+	Type string `json:"type"`
+	Text string `json:"text"`
+}
 
 const (
 	T = "たいち"
 	A = "あゆみ"
+	url = "https://api.line.me/v2/bot/message/multicast"
+	token = "du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU="
+	tid = "U68a1ff1883b23c5b65c6c7115e88b514"
+	// aid = ""
+	message = "じろりんちょ"
 )
 
 var (
@@ -38,6 +57,7 @@ type templateParams struct {
 	Posts2 []Post
 	Access2 []Post
 	Check2 string
+	Debug string
 }
 
 func main() {
@@ -52,6 +72,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := templateParams{}
+
 
 	// GET要求時
 	if r.Method == "GET" {
@@ -91,6 +112,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			params.Posts1 = []Post{post}
+			// LINE通知
+			line(ctx, &params)
 		}
 	}
 	if post.Author == A {
@@ -107,6 +130,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			params.Posts2 = []Post{post}
+			// LINE通知
+			line(ctx, &params)
 		}
 	}
 
@@ -172,4 +197,25 @@ func jst(now time.Time) time.Time {
 	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
 	nowJST := nowUTC.In(jst)
 	return nowJST
+}
+
+func line(ctx context.Context, params *templateParams) {
+	to := []string{tid}
+	// to := []string{tid, aid}
+	messages := []Message{Message{Type: "text", Text: message}}
+	body := Push{To: to, Messages: messages}
+	b, _ := json.Marshal(&body)
+	// params.Debug = string(b)
+	
+	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer " + token)
+
+	client := urlfetch.Client(ctx)
+	resp, err := client.Do(req)
+	if err != nil {
+		params.Debug = err.Error()
+	}
+	
+	defer resp.Body.Close()
 }

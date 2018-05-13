@@ -1,0 +1,30 @@
+Channel Secret
+f4e7a3b228a30a037ee01ccca885ff20
+
+アクセストークン
+du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU=
+
+Your user ID 
+U68a1ff1883b23c5b65c6c7115e88b514
+
+curl -v -X POST https://api.line.me/v2/bot/message/multicast -H "Content-Type:application/json" -H "Authorization: Bearer du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU=" -d "{\"to\": [\"U68a1ff1883b23c5b65c6c7115e88b514\"],\"messages\":[{\"type\":\"text\",\"text\":\"Hello, world1\"},{\"type\":\"text\",\"text\":\"Hello, world2\"}]}"
+
+
+curl -v -X POST https://api.line.me/v2/bot/message/multicast \
+-H 'Content-Type:application/json' \
+-H 'Authorization: Bearer {channel access token}' \
+-d '{
+    "to": ["U4af4980629...","U0c229f96c4..."],
+    "messages":[
+        {
+            "type":"text",
+            "text":"Hello, world1"
+        },
+        {
+            "type":"text",
+            "text":"Hello, world2"
+        }
+    ]
+}'
+
+

@@ -54,13 +54,14 @@
 
 <b><span id="blink0243">{{.Check2}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>
 
+{{with .Debug}}<pre>{{.}}</pre>{{end}}
 </div>
 
 <script type="text/javascript">
   $(function(){
     setTimeout(function(){
       $("#secret").html("");
-    }, 10000);
+    }, 60000);
   });
 </script>
 
