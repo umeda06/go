@@ -4,8 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	_ "fmt"
+	"fmt"
 	"html/template"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -20,6 +21,11 @@ type Push struct {
 	Messages []Message `json:"messages"`
 }
 
+type Reply struct {
+	ReplyToken string `json:"replyToken"`
+	Messages []Message `json:"messages"`
+}
+
 type Message struct {
 	Type string `json:"type"`
 	Text string `json:"text"`
@@ -28,7 +34,8 @@ type Message struct {
 const (
 	T = "たいち"
 	A = "あゆみ"
-	url = "https://api.line.me/v2/bot/message/multicast"
+	pushurl = "https://api.line.me/v2/bot/message/multicast"
+	replyurl = "https://api.line.me/v2/bot/message/reply"
 	token = "du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU="
 	tid = "U68a1ff1883b23c5b65c6c7115e88b514"
 	// aid = ""
@@ -62,17 +69,20 @@ type templateParams struct {
 
 func main() {
 	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/callback", callbackHandler)
 	appengine.Main()
 }
 
+// 通常のリクエスト処理
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
 	if r.URL.Path != "/" {
 		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 
 	params := templateParams{}
-
 
 	// GET要求時
 	if r.Method == "GET" {
@@ -113,7 +123,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			params.Posts1 = []Post{post}
 			// LINE通知
-			line(ctx, &params)
+			push(ctx)
 		}
 	}
 	if post.Author == A {
@@ -131,7 +141,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			params.Posts2 = []Post{post}
 			// LINE通知
-			line(ctx, &params)
+			push(ctx)
 		}
 	}
 
@@ -199,23 +209,57 @@ func jst(now time.Time) time.Time {
 	return nowJST
 }
 
-func line(ctx context.Context, params *templateParams) {
+func push(ctx context.Context) {
 	to := []string{tid}
 	// to := []string{tid, aid}
 	messages := []Message{Message{Type: "text", Text: message}}
-	body := Push{To: to, Messages: messages}
-	b, _ := json.Marshal(&body)
-	// params.Debug = string(b)
+	push := Push{To: to, Messages: messages}
+	b, _ := json.Marshal(&push)
 	
-	req, _ := http.NewRequest("POST", url, bytes.NewBuffer(b))
+	req, _ := http.NewRequest("POST", pushurl, bytes.NewBuffer(b))
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Add("Authorization", "Bearer " + token)
 
 	client := urlfetch.Client(ctx)
-	resp, err := client.Do(req)
-	if err != nil {
-		params.Debug = err.Error()
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+}
+
+// LINEのコールバック処理
+func callbackHandler(w http.ResponseWriter, r *http.Request) {
+	defer r.Body.Close()
+
+	// GET要求時
+	if r.Method == "GET" {
+		fmt.Fprintf(w, "Hello World")
+		return
 	}
+
+	// POST要求時
+	body, _ := ioutil.ReadAll(r.Body)
+	var events interface{}
+	json.Unmarshal(body, &events)
+	replyToken := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["replyToken"].(string)
+	userId := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["source"].(map[string]interface{})["userId"].(string)
+
+	ctx := appengine.NewContext(r)
+
+	// LINE応答
+	reply(ctx, replyToken, userId)
+
+	fmt.Fprintf(w, "OK")
+}
+
+func reply(ctx context.Context, replyToken string, userId string) {
+	messages := []Message{Message{Type: "text", Text: userId}}
+	reply := Reply{ReplyToken: replyToken, Messages: messages}
+	b, _ := json.Marshal(&reply)
 	
+	req, _ := http.NewRequest("POST", replyurl, bytes.NewBuffer(b))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer " + token)
+
+	client := urlfetch.Client(ctx)
+	resp, _ := client.Do(req)
 	defer resp.Body.Close()
 }

@@ -10,6 +10,8 @@
 <h1>Wherever you are...</h1>
 
 <img id="logo" src="/static/gopher.png" width="200">
+<a href="https://line.me/R/ti/p/%40lnl5334e"><img height="36" border="0" alt="友だち追加" src="https://scdn.line-apps.com/n/line_add_friends/btn/ja.png"></a>
+
 
 {{with .Notice}}<div id="notice">{{.}}</div>{{end}}
 
@@ -35,7 +37,7 @@
     {{end}}
   {{end}}
 
-<b><span id="blink0243">{{.Check1}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>
+{{with .Check1}}<b><span id="blink0243">{{.}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>{{end}}
 
   {{with .Posts2}}
     <ul>
@@ -52,7 +54,7 @@
     {{end}}
   {{end}}
 
-<b><span id="blink0243">{{.Check2}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>
+{{with .Check2}}<b><span id="blink0243">{{.}}</span><script>with(blink0243)id='',style.opacity=1,setInterval(function(){style.opacity^=1},500)</script></b>{{end}}
 
 {{with .Debug}}<pre>{{.}}</pre>{{end}}
 </div>
@@ -61,7 +63,7 @@
   $(function(){
     setTimeout(function(){
       $("#secret").html("");
-    }, 60000);
+    }, 30000);
   });
 </script>
 
