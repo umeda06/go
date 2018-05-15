@@ -39,7 +39,10 @@ const (
 	token = "du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU="
 	tid = "U68a1ff1883b23c5b65c6c7115e88b514"
 	// aid = ""
-	message = "じろりんちょ"
+	message1 = "じろりんちょ"
+	message2 = "じろり"
+	message3 = "ジロリンチョ"
+	message4 = "ジロリ"
 )
 
 var (
@@ -123,7 +126,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			params.Posts1 = []Post{post}
 			// LINE通知
-			push(ctx)
+			push(ctx, message1)
 		}
 	}
 	if post.Author == A {
@@ -141,7 +144,10 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			}
 			params.Posts2 = []Post{post}
 			// LINE通知
-			push(ctx)
+			push(ctx, message3)
+		} else {
+			// LINE通知
+			pushx(ctx, message4)
 		}
 	}
 
@@ -209,10 +215,25 @@ func jst(now time.Time) time.Time {
 	return nowJST
 }
 
-func push(ctx context.Context) {
+func push(ctx context.Context, msg string) {
 	to := []string{tid}
 	// to := []string{tid, aid}
-	messages := []Message{Message{Type: "text", Text: message}}
+	messages := []Message{Message{Type: "text", Text: msg}}
+	push := Push{To: to, Messages: messages}
+	b, _ := json.Marshal(&push)
+	
+	req, _ := http.NewRequest("POST", pushurl, bytes.NewBuffer(b))
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer " + token)
+
+	client := urlfetch.Client(ctx)
+	resp, _ := client.Do(req)
+	defer resp.Body.Close()
+}
+
+func pushx(ctx context.Context, msg string) {
+	to := []string{tid}
+	messages := []Message{Message{Type: "text", Text: msg}}
 	push := Push{To: to, Messages: messages}
 	b, _ := json.Marshal(&push)
 	
