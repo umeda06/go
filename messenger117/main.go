@@ -38,7 +38,7 @@ const (
 	replyurl = "https://api.line.me/v2/bot/message/reply"
 	token = "du4lrrAEzOclxVvdh9aCR7tyqCJmWnByE0BuKPH4n2LZPHRa0BvR4KxBccZqSye/EyWYQLeO9wAcgjalueHdFovYj1vqP4AKOW9ykTWIWisXWoQ5qtIKEXtlnCGsfp8nIFbXwJcROjeMJ9U4/e11zgdB04t89/1O/w1cDnyilFU="
 	tid = "U68a1ff1883b23c5b65c6c7115e88b514"
-	// aid = ""
+	aid = "Uceea5f897eed10e2d029b1435b058d10"
 	message1 = "じろりんちょ"
 	message2 = "じろり"
 	message3 = "ジロリンチョ"
@@ -216,8 +216,7 @@ func jst(now time.Time) time.Time {
 }
 
 func push(ctx context.Context, msg string) {
-	to := []string{tid}
-	// to := []string{tid, aid}
+	to := []string{tid, aid}
 	messages := []Message{Message{Type: "text", Text: msg}}
 	push := Push{To: to, Messages: messages}
 	b, _ := json.Marshal(&push)
