@@ -147,7 +147,7 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 			push(ctx, message3)
 		} else {
 			// LINE通知
-			pushx(ctx, message4)
+			pushx(ctx, message4, tid)
 		}
 	}
 
@@ -230,8 +230,8 @@ func push(ctx context.Context, msg string) {
 	defer resp.Body.Close()
 }
 
-func pushx(ctx context.Context, msg string) {
-	to := []string{tid}
+func pushx(ctx context.Context, msg string, x string) {
+	to := []string{x}
 	messages := []Message{Message{Type: "text", Text: msg}}
 	push := Push{To: to, Messages: messages}
 	b, _ := json.Marshal(&push)
@@ -259,13 +259,19 @@ func callbackHandler(w http.ResponseWriter, r *http.Request) {
 	body, _ := ioutil.ReadAll(r.Body)
 	var events interface{}
 	json.Unmarshal(body, &events)
-	replyToken := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["replyToken"].(string)
+	// replyToken := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["replyToken"].(string)
 	userId := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["source"].(map[string]interface{})["userId"].(string)
+	text := events.(map[string]interface{})["events"].([]interface{})[0].(map[string]interface{})["message"].(map[string]interface{})["text"].(string)
 
 	ctx := appengine.NewContext(r)
 
 	// LINE応答
-	reply(ctx, replyToken, userId)
+	// reply(ctx, replyToken, userId)
+	if userId == tid {
+		pushx(ctx, text, aid)
+	} else {
+		pushx(ctx, text, tid)
+	}
 
 	fmt.Fprintf(w, "OK")
 }
