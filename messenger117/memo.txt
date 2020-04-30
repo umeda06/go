@@ -1,2 +1,7 @@
 —F‚¾‚¿’Ç‰Á
 https://line.me/R/ti/p/%40lnl5334e
+
+update
+go get -u google.golang.org/appengine
+gcloud components update
+
